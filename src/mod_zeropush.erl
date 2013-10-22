@@ -39,10 +39,9 @@
 
 -include("ejabberd.hrl").
 -include("jlib.hrl").
--include("logger.hrl").
 
 start(Host, Opts) ->
-    ?INFO_MSG("Starting mod_offline_post", [] ),
+    ?INFO_MSG("Starting mod_zeropush", [] ),
     register(?PROCNAME,spawn(?MODULE, init, [Host, Opts])),  
     ok.
 
@@ -53,29 +52,29 @@ init(Host, _Opts) ->
     ok.
 
 stop(Host) ->
-    ?INFO_MSG("Stopping mod_offline_post", [] ),
+    ?INFO_MSG("Stopping mod_zeropush", [] ),
     ejabberd_hooks:delete(offline_message_hook, Host,
 			  ?MODULE, send_notice, 10),
     ok.
 
 send_notice(From, To, Packet) ->
-    Type = xml:get_tag_attr_s(list_to_binary("type"), Packet),
-    Body = xml:get_path_s(Packet, [{elem, list_to_binary("body")}, cdata]),
-    Sound = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, sound, fun(S) -> iolist_to_binary(S) end, list_to_binary("default")),
-    Token = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, auth_token, fun(S) -> iolist_to_binary(S) end, list_to_binary("")),
-    PostUrl = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, post_url, fun(S) -> iolist_to_binary(S) end, list_to_binary("https://api.zeropush.com/broadcast/")),
+    Type = xml:get_tag_attr_s("type", Packet),
+    Body = xml:get_path_s(Packet, [{elem, "body"}, cdata]),
+    Token = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, auth_token, [] ),
+    Sound = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, sound, [] ),
+    PostUrl = gen_mod:get_module_opt(To#jid.lserver, ?MODULE, post_url, [] ),
 
-    if (Type == <<"chat">>) and (Body /= <<"">>) ->
+    if (Type == "chat") and (Body /= "") ->
 	      Sep = "&",
         Post = [
-          "alert=", url_encode(binary_to_list(Body)), Sep,
+          "alert=", url_encode(Body), Sep,
 					"badge=", url_encode("+1"), Sep,
           "sound=", Sound, Sep,
           "channel=", To#jid.luser, Sep,
           "info[from]=", From#jid.luser, Sep,
           "auth_token=", Token],
         ?INFO_MSG("Sending post request to ~s with body \"~s\"", [PostUrl, Post]),
-        httpc:request(post, {binary_to_list(PostUrl), [], "application/x-www-form-urlencoded", list_to_binary(Post)},[],[]),
+        httpc:request(post, {PostUrl, [], "application/x-www-form-urlencoded", list_to_binary(Post)},[],[]),
         ok;
       true ->
         ok
