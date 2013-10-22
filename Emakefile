@@ -2,7 +2,7 @@
 %%%
 
 %%% On OSX with ejabberd installed through homebrew
-{'src/mod_zeropush', [{outdir, "ebin"},{i,"/usr/local/Cellar/ejabberd/13.10/lib/ejabberd/include"}]}.
+{'src/mod_zeropush', [{outdir, "ebin"},{i,"/usr/local/Cellar/ejabberd/2.1.13/lib/ejabberd/include"}]}.
 
 %%% On Ubuntu
 %%% {'src/mod_zeropush', [{outdir, "ebin"},{i,"/usr/lib/ejabberd/include/"}]}.
