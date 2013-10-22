@@ -42,8 +42,8 @@
 -include("logger.hrl").
 
 start(Host, Opts) ->
-    ?INFO_MSG("Starting mod_offline_post", [] ),
-    register(?PROCNAME,spawn(?MODULE, init, [Host, Opts])),  
+    ?INFO_MSG("Starting mod_zeropush", [] ),
+    register(?PROCNAME,spawn(?MODULE, init, [Host, Opts])),
     ok.
 
 init(Host, _Opts) ->
@@ -53,7 +53,7 @@ init(Host, _Opts) ->
     ok.
 
 stop(Host) ->
-    ?INFO_MSG("Stopping mod_offline_post", [] ),
+    ?INFO_MSG("Stopping mod_zeropush", [] ),
     ejabberd_hooks:delete(offline_message_hook, Host,
 			  ?MODULE, send_notice, 10),
     ok.
