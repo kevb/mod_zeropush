@@ -7,13 +7,13 @@ The notification contains the following URI-encoded payload:
 
 ```json
 {
-	"auth_token": {config-auth_token},
-	"channel": {reciepient-jid},
-	"alert": {chat-message-body},
+	"auth_token": "{config-auth_token}",
+	"channel": "{recipient-jid}",
+	"alert": "{chat-message-body}",
 	"badge": "+1",
-	"sound": {config-sound},
+	"sound": "{config-sound}",
 	"info": {
-		"from": {sender-jid}
+		"from": "{sender-jid}"
 	}
 }
 ```
